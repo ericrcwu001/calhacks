@@ -261,6 +261,13 @@
             },
             "example": ["en:milk", "en:nuts", "en:soybeans"]
           },
+          "image_url": {
+            "type": "string",
+            "description": "URL of the main product image",
+            "format": "uri",
+            "nullable": true,
+            "example": "https://images.openfoodfacts.org/images/products/301/762/042/2003/front_fr.783.400.jpg"
+          },
           "source": {
             "type": "string",
             "description": "Data source",

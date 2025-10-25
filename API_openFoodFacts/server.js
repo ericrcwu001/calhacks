@@ -81,6 +81,8 @@ app.use(express.json());
 // ---------- Helpers ----------
 function normalizeProduct(p) {
   if (!p) return null;
+  const frontImage = p.selected_images?.front?.display;
+  const imageUrl = frontImage ? Object.values(frontImage)[0] : null;
   return {
     code: p.code ?? null,
     product_name_en: p.product_name_en ?? null,
@@ -95,6 +97,7 @@ function normalizeProduct(p) {
     ingredients_text_en: p.ingredients_text_en ?? null,
     ingredients_analysis_tags: p.ingredients_analysis_tags ?? null,
     allergens_tags: p.allergens_tags ?? null,
+    image_url: imageUrl,
     source: "openfoodfacts",
   };
 }
@@ -137,6 +140,7 @@ app.get("/v1/products/:barcode", async (req, res, next) => {
       "ingredients_text_en",
       "ingredients_analysis_tags",
       "allergens_tags",
+      "selected_images",
     ].join(",");
 
     const { data } = await http.get(`/api/v2/product/${encodeURIComponent(barcode)}.json`, {
@@ -177,7 +181,7 @@ app.get("/v1/products", async (req, res, next) => {
     if (cache.has(key)) return res.json(cache.get(key));
 
     // OFF v2 search supports filtering by code (comma-separated)
-    const fields = "code,product_name_en,generic_name_en,quantity,product_quantity,product_quantity_unit,serving_size,serving_quantity,serving_quantity_unit,ingredients,ingredients_text_en,ingredients_analysis_tags,allergens_tags";
+    const fields = "code,product_name_en,generic_name_en,quantity,product_quantity,product_quantity_unit,serving_size,serving_quantity,serving_quantity_unit,ingredients,ingredients_text_en,ingredients_analysis_tags,allergens_tags,selected_images";
     const { data } = await http.get("/api/v2/search", {
       params: { code: codes, fields, page_size: 100 },
     });
