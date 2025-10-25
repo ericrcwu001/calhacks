@@ -1,0 +1,312 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Open Food Facts Proxy API",
+    "description": "A proxy API that normalizes Open Food Facts data with CORS support, caching, and consistent error responses. Returns only essential product information including ingredients, allergens, and nutritional data.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "API Support",
+      "email": "contact@example.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://openfoodfacts-bxawn130t-erics-projects-17f00cbc.vercel.app",
+      "description": "Production server"
+    }
+  ],
+  "security": [],
+  "paths": {
+    "/v1/health": {
+      "get": {
+        "summary": "Health Check",
+        "description": "Check if the API is running and connected to Open Food Facts",
+        "operationId": "healthCheck",
+        "tags": ["System"],
+        "responses": {
+          "200": {
+            "description": "API is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "upstream": {
+                      "type": "string",
+                      "example": "https://world.openfoodfacts.org"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/products/{barcode}": {
+      "get": {
+        "summary": "Get Product by Barcode",
+        "description": "Retrieve normalized product information for a specific barcode",
+        "operationId": "getProductByBarcode",
+        "tags": ["Products"],
+        "parameters": [
+          {
+            "name": "barcode",
+            "in": "path",
+            "required": true,
+            "description": "Product barcode (EAN-13, UPC, etc.)",
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9]{8,14}$",
+              "example": "3017620422003"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream service error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/products": {
+      "get": {
+        "summary": "Get Multiple Products",
+        "description": "Retrieve normalized product information for multiple barcodes",
+        "operationId": "getProducts",
+        "tags": ["Products"],
+        "parameters": [
+          {
+            "name": "codes",
+            "in": "query",
+            "required": true,
+            "description": "Comma-separated list of product barcodes",
+            "schema": {
+              "type": "string",
+              "example": "3017620422003,3017620422004"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Products found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Product"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - missing or invalid codes parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream service error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Product": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Product barcode",
+            "example": "3017620422003"
+          },
+          "product_name_en": {
+            "type": "string",
+            "description": "Product name in English",
+            "example": "Nutella"
+          },
+          "generic_name_en": {
+            "type": "string",
+            "description": "Generic product name in English",
+            "example": "Hazelnut And Cocoa Spread"
+          },
+          "quantity": {
+            "type": "string",
+            "description": "Product quantity with unit",
+            "example": "400 g"
+          },
+          "product_quantity": {
+            "type": "number",
+            "description": "Numeric product quantity",
+            "example": 400
+          },
+          "product_quantity_unit": {
+            "type": "string",
+            "description": "Unit of measurement",
+            "example": "g"
+          },
+          "serving_size": {
+            "type": "string",
+            "description": "Serving size with unit",
+            "example": "15 g"
+          },
+          "serving_quantity": {
+            "type": "number",
+            "description": "Numeric serving quantity",
+            "example": 15
+          },
+          "serving_quantity_unit": {
+            "type": "string",
+            "description": "Serving unit of measurement",
+            "example": "g"
+          },
+          "ingredients": {
+            "type": "array",
+            "description": "Detailed ingredients list with analysis",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Ingredient ID",
+                  "example": "en:sugar"
+                },
+                "text": {
+                  "type": "string",
+                  "description": "Ingredient name",
+                  "example": "Sucre"
+                },
+                "percent_estimate": {
+                  "type": "number",
+                  "description": "Estimated percentage",
+                  "example": 38.35
+                },
+                "vegan": {
+                  "type": "string",
+                  "description": "Vegan status",
+                  "example": "yes"
+                },
+                "vegetarian": {
+                  "type": "string",
+                  "description": "Vegetarian status",
+                  "example": "yes"
+                }
+              }
+            }
+          },
+          "ingredients_text_en": {
+            "type": "string",
+            "description": "Ingredients text in English",
+            "example": ""
+          },
+          "ingredients_analysis_tags": {
+            "type": "array",
+            "description": "Analysis tags for ingredients",
+            "items": {
+              "type": "string"
+            },
+            "example": ["en:palm-oil", "en:non-vegan", "en:vegetarian"]
+          },
+          "allergens_tags": {
+            "type": "array",
+            "description": "Allergen information",
+            "items": {
+              "type": "string"
+            },
+            "example": ["en:milk", "en:nuts", "en:soybeans"]
+          },
+          "source": {
+            "type": "string",
+            "description": "Data source",
+            "example": "openfoodfacts"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "about:blank"
+          },
+          "title": {
+            "type": "string",
+            "description": "Error title",
+            "example": "Not Found"
+          },
+          "status": {
+            "type": "integer",
+            "description": "HTTP status code",
+            "example": 404
+          },
+          "detail": {
+            "type": "string",
+            "description": "Error details",
+            "example": "Barcode 123456789 not found"
+          },
+          "instance": {
+            "type": "string",
+            "description": "Request path that caused the error",
+            "example": "/v1/products/123456789"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "System",
+      "description": "System health and status endpoints"
+    },
+    {
+      "name": "Products",
+      "description": "Product information and lookup endpoints"
+    }
+  ]
+}

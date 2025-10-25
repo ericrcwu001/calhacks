@@ -1,0 +1,21 @@
+{
+  "name": "api-openfoodfacts",
+  "version": "1.0.0",
+  "description": "A tiny Node.js API that proxies & normalizes Open Food Facts",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "vercel-build": "echo 'No build step needed'"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "axios": "^1.6.0",
+    "lru-cache": "^10.0.0",
+    "cors": "^2.8.5"
+  },
+  "keywords": ["api", "openfoodfacts", "proxy", "nutrition"],
+  "author": "Your Name",
+  "license": "MIT"
+}

@@ -1,0 +1,52 @@
+{
+  "name": "Open Food Facts Proxy API",
+  "description": "A proxy API that normalizes Open Food Facts data with CORS support, caching, and consistent error responses. Returns only essential product information including ingredients, allergens, and nutritional data.",
+  "baseUrl": "https://openfoodfacts-bxawn130t-erics-projects-17f00cbc.vercel.app",
+  "authentication": {
+    "type": "none",
+    "description": "No authentication required - this is a public API"
+  },
+  "endpoints": {
+    "health": {
+      "method": "GET",
+      "path": "/v1/health",
+      "description": "Check API health status",
+      "responseType": "json"
+    },
+    "getProduct": {
+      "method": "GET", 
+      "path": "/v1/products/{barcode}",
+      "description": "Get product information by barcode",
+      "parameters": {
+        "barcode": {
+          "type": "path",
+          "required": true,
+          "description": "Product barcode (8-14 digits)"
+        }
+      },
+      "responseType": "json"
+    },
+    "getProducts": {
+      "method": "GET",
+      "path": "/v1/products",
+      "description": "Get multiple products by barcodes",
+      "parameters": {
+        "codes": {
+          "type": "query",
+          "required": true,
+          "description": "Comma-separated list of barcodes"
+        }
+      },
+      "responseType": "json"
+    }
+  },
+  "testConfiguration": {
+    "testEndpoint": "/v1/health",
+    "expectedResponse": {
+      "status": "ok",
+      "upstream": "https://world.openfoodfacts.org"
+    },
+    "testProductBarcode": "3017620422003",
+    "testBatchBarcodes": "3017620422003,3017620422004"
+  }
+}
