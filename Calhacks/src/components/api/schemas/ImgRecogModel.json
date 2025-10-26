@@ -1,0 +1,307 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Food Image Recognition API",
+    "description": "An AI-powered API that identifies edible food items in images and provides nutritional information. Uses Google Gemini AI to detect food items and calculate nutritional values including calories, protein, carbohydrates, fat, and sodium. Returns data as CSV format for easy pandas DataFrame conversion.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "API Support",
+      "email": "support@example.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api-production.creao.ai/execute-apis/v2",
+      "description": "Production server"
+    }
+  ],
+  "security": [],
+  "paths": {
+    "/api/image-recognition": {
+      "post": {
+        "summary": "Recognize Food Items in Image",
+        "description": "Upload an image containing food items to identify them, count quantities, and retrieve nutritional information. Returns CSV format with food items, counts, and nutritional data including calories, protein, carbohydrates, fat, and sodium.",
+        "operationId": "recognizeFood",
+        "tags": [
+          "Food Recognition"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "image/*": {
+              "schema": {
+                "type": "string",
+                "format": "binary",
+                "description": "Image file (JPG, PNG, or other image format) containing food items"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "image": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Image file containing food items"
+                  }
+                },
+                "required": [
+                  "image"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Food items successfully identified and analyzed",
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary",
+                  "example": "label,count,calories_kcal,protein_g,carbohydrates_g,fat_g,sodium_mg\napple,10,950,5.0,250.0,3.0,20\norange,5,310,6.0,77.0,1.0,5"
+                },
+                "examples": {
+                  "apples_and_oranges": {
+                    "summary": "Example with apples and oranges",
+                    "value": "label,count,calories_kcal,protein_g,carbohydrates_g,fat_g,sodium_mg\napple,10,950,5.0,250.0,3.0,20\norange,5,310,6.0,77.0,1.0,5"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "label",
+                      "count"
+                    ],
+                    "properties": {
+                      "label": {
+                        "type": "string",
+                        "description": "Name of the food item",
+                        "example": "apple"
+                      },
+                      "count": {
+                        "type": "integer",
+                        "description": "Number of this food item detected",
+                        "minimum": 1,
+                        "example": 10
+                      },
+                      "calories_kcal": {
+                        "type": "number",
+                        "description": "Total calories (kcal) for all items of this type",
+                        "minimum": 0,
+                        "example": 950
+                      },
+                      "protein_g": {
+                        "type": "number",
+                        "description": "Total protein in grams for all items of this type",
+                        "minimum": 0,
+                        "example": 5
+                      },
+                      "carbohydrates_g": {
+                        "type": "number",
+                        "description": "Total carbohydrates in grams for all items of this type",
+                        "minimum": 0,
+                        "example": 250
+                      },
+                      "fat_g": {
+                        "type": "number",
+                        "description": "Total fat in grams for all items of this type",
+                        "minimum": 0,
+                        "example": 3
+                      },
+                      "sodium_mg": {
+                        "type": "number",
+                        "description": "Total sodium in milligrams for all items of this type",
+                        "minimum": 0,
+                        "example": 20
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - no image provided or invalid image format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Error message describing what went wrong",
+                      "example": "No image provided"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Additional error details or context",
+                      "example": "An error occurred while processing the image"
+                    }
+                  }
+                },
+                "example": {
+                  "error": "No image provided"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error occurred during image processing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Error message describing what went wrong",
+                      "example": "No image provided"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Additional error details or context",
+                      "example": "An error occurred while processing the image"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/CreaoApiNameHeader"
+          },
+          {
+            "$ref": "#/components/parameters/CreaoApiPathHeader"
+          },
+          {
+            "$ref": "#/components/parameters/CreaoApiIdHeader"
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "FoodItem": {
+        "type": "object",
+        "required": [
+          "label",
+          "count"
+        ],
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "Name of the food item",
+            "example": "apple"
+          },
+          "count": {
+            "type": "integer",
+            "description": "Number of this food item detected",
+            "minimum": 1,
+            "example": 10
+          },
+          "calories_kcal": {
+            "type": "number",
+            "description": "Total calories (kcal) for all items of this type",
+            "minimum": 0,
+            "example": 950
+          },
+          "protein_g": {
+            "type": "number",
+            "description": "Total protein in grams for all items of this type",
+            "minimum": 0,
+            "example": 5
+          },
+          "carbohydrates_g": {
+            "type": "number",
+            "description": "Total carbohydrates in grams for all items of this type",
+            "minimum": 0,
+            "example": 250
+          },
+          "fat_g": {
+            "type": "number",
+            "description": "Total fat in grams for all items of this type",
+            "minimum": 0,
+            "example": 3
+          },
+          "sodium_mg": {
+            "type": "number",
+            "description": "Total sodium in milligrams for all items of this type",
+            "minimum": 0,
+            "example": 20
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error message describing what went wrong",
+            "example": "No image provided"
+          },
+          "message": {
+            "type": "string",
+            "description": "Additional error details or context",
+            "example": "An error occurred while processing the image"
+          }
+        }
+      }
+    },
+    "parameters": {
+      "CreaoApiNameHeader": {
+        "name": "X-CREAO-API-NAME",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "default": "ImgRecogModel"
+        },
+        "description": "API name identifier"
+      },
+      "CreaoApiIdHeader": {
+        "name": "X-CREAO-API-ID",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "default": "68fd7f226090ce71048eed26"
+        },
+        "description": "API ID identifier"
+      },
+      "CreaoApiPathHeader": {
+        "name": "X-CREAO-API-PATH",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "default": "/api/image-recognition"
+        },
+        "description": "API path identifier"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Food Recognition",
+      "description": "Endpoints for identifying food items in images and retrieving nutritional information"
+    }
+  ]
+}

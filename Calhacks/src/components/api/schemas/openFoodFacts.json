@@ -11,7 +11,7 @@
   },
   "servers": [
     {
-      "url": "https://openfoodfacts-bxawn130t-erics-projects-17f00cbc.vercel.app",
+      "url": "https://api-production.creao.ai/execute-apis/v2",
       "description": "Production server"
     }
   ],
@@ -22,7 +22,9 @@
         "summary": "Health Check",
         "description": "Check if the API is running and connected to Open Food Facts",
         "operationId": "healthCheck",
-        "tags": ["System"],
+        "tags": [
+          "System"
+        ],
         "responses": {
           "200": {
             "description": "API is healthy",
@@ -44,7 +46,18 @@
               }
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/CreaoApiNameHeader"
+          },
+          {
+            "$ref": "#/components/parameters/CreaoApiPathHeader"
+          },
+          {
+            "$ref": "#/components/parameters/CreaoApiIdHeader"
+          }
+        ]
       }
     },
     "/v1/products/{barcode}": {
@@ -52,8 +65,19 @@
         "summary": "Get Product by Barcode",
         "description": "Retrieve normalized product information for a specific barcode",
         "operationId": "getProductByBarcode",
-        "tags": ["Products"],
+        "tags": [
+          "Products"
+        ],
         "parameters": [
+          {
+            "$ref": "#/components/parameters/CreaoApiNameHeader"
+          },
+          {
+            "$ref": "#/components/parameters/CreaoApiPathHeader"
+          },
+          {
+            "$ref": "#/components/parameters/CreaoApiIdHeader"
+          },
           {
             "name": "barcode",
             "in": "path",
@@ -105,8 +129,19 @@
         "summary": "Get Multiple Products",
         "description": "Retrieve normalized product information for multiple barcodes",
         "operationId": "getProducts",
-        "tags": ["Products"],
+        "tags": [
+          "Products"
+        ],
         "parameters": [
+          {
+            "$ref": "#/components/parameters/CreaoApiNameHeader"
+          },
+          {
+            "$ref": "#/components/parameters/CreaoApiPathHeader"
+          },
+          {
+            "$ref": "#/components/parameters/CreaoApiIdHeader"
+          },
           {
             "name": "codes",
             "in": "query",
@@ -251,7 +286,11 @@
             "items": {
               "type": "string"
             },
-            "example": ["en:palm-oil", "en:non-vegan", "en:vegetarian"]
+            "example": [
+              "en:palm-oil",
+              "en:non-vegan",
+              "en:vegetarian"
+            ]
           },
           "allergens_tags": {
             "type": "array",
@@ -259,7 +298,11 @@
             "items": {
               "type": "string"
             },
-            "example": ["en:milk", "en:nuts", "en:soybeans"]
+            "example": [
+              "en:milk",
+              "en:nuts",
+              "en:soybeans"
+            ]
           },
           "image_url": {
             "type": "string",
@@ -303,6 +346,38 @@
             "example": "/v1/products/123456789"
           }
         }
+      }
+    },
+    "parameters": {
+      "CreaoApiNameHeader": {
+        "name": "X-CREAO-API-NAME",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "default": "openFoodFacts"
+        },
+        "description": "API name identifier"
+      },
+      "CreaoApiIdHeader": {
+        "name": "X-CREAO-API-ID",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "default": "68fc7aa38ff3b2a357d57253"
+        },
+        "description": "API ID identifier"
+      },
+      "CreaoApiPathHeader": {
+        "name": "X-CREAO-API-PATH",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "default": "/v1/health"
+        },
+        "description": "API path identifier"
       }
     }
   },

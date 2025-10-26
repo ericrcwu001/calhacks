@@ -1,0 +1,56 @@
+{
+  "inventory": [
+    {
+      "id": "ITEM-001",
+      "name": "Chicken Breast",
+      "category": "Protein",
+      "quantity": 2000,
+      "unit": "grams",
+      "calories_kcal": 165,
+      "protein_g": 31.0,
+      "carbohydrates_g": 0,
+      "fiber_g": 0,
+      "sugars_g": 0,
+      "fat_g": 3.6,
+      "sodium_mg": 74,
+      "tags": ["lean", "high-protein"],
+      "allergens": []
+    },
+    {
+      "id": "ITEM-002",
+      "name": "Rice",
+      "category": "Grains",
+      "quantity": 1500,
+      "unit": "grams",
+      "calories_kcal": 130,
+      "protein_g": 2.7,
+      "carbohydrates_g": 28.2,
+      "fiber_g": 0.4,
+      "sugars_g": 0.1,
+      "fat_g": 0.3,
+      "sodium_mg": 1,
+      "tags": ["staple", "carbs"],
+      "allergens": []
+    },
+    {
+      "id": "ITEM-003",
+      "name": "Broccoli",
+      "category": "Vegetables",
+      "quantity": 800,
+      "unit": "grams",
+      "calories_kcal": 34,
+      "protein_g": 2.8,
+      "carbohydrates_g": 6.6,
+      "fiber_g": 2.6,
+      "sugars_g": 1.7,
+      "fat_g": 0.4,
+      "sodium_mg": 33,
+      "tags": ["vegetable", "vitamin-c"],
+      "allergens": []
+    }
+  ],
+  "dietary_filters": [],
+  "count": 2,
+  "recipes": 50
+}
+

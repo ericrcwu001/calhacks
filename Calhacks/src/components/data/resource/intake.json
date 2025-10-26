@@ -1,0 +1,174 @@
+{
+  "id": "102019a1a09cfa17d17a4c602b2548b8624",
+  "version": "102019a1fc9faf872c9a5575aef635e49c5",
+  "schema": {
+    "name": "intake",
+    "description": "Records of food donations received by the food bank.",
+    "fields": [
+      {
+        "name": "id",
+        "description": "Unique identifier for each data of this entity.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 1,
+          "reason": "Publicly accessible identifier."
+        }
+      },
+      {
+        "name": "data_creator",
+        "description": "id of the user who creates the record",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal user tracking information."
+        }
+      },
+      {
+        "name": "data_updater",
+        "description": "id of the user who updates the record",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal user tracking information."
+        }
+      },
+      {
+        "name": "create_time",
+        "description": "create time in timestamp unix",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal audit trail."
+        },
+        "format": "timestamp"
+      },
+      {
+        "name": "update_time",
+        "description": "update time in timestamp unix",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal audit trail."
+        },
+        "format": "timestamp"
+      },
+      {
+        "name": "item_id",
+        "description": "Foreign key referencing the item that was donated.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal reference to another entity."
+        }
+      },
+      {
+        "name": "qty",
+        "description": "Quantity of the item received in the donation.",
+        "type": 2,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal inventory data."
+        },
+        "numeric": "int"
+      },
+      {
+        "name": "weight_kg",
+        "description": "Total weight of the donated items in kilograms.",
+        "type": 2,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal inventory data."
+        },
+        "nullable": true,
+        "numeric": "float"
+      },
+      {
+        "name": "source",
+        "description": "Source of the donation (e.g., name of person or organization).",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 3,
+          "reason": "May contain personal or organizational information of donors."
+        },
+        "nullable": true
+      },
+      {
+        "name": "expiry_date",
+        "description": "Expiration date of the donated food item.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal data for stock rotation and safety."
+        },
+        "nullable": true,
+        "format": "date"
+      }
+    ],
+    "indexes": [
+      {
+        "fields": [
+          "id"
+        ],
+        "unique": true,
+        "primary": true,
+        "order": false
+      },
+      {
+        "fields": [
+          "data_creator"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "data_updater"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "item_id"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "expiry_date"
+        ],
+        "order": true
+      },
+      {
+        "fields": [
+          "source"
+        ],
+        "order": false
+      }
+    ],
+    "relations": [
+      {
+        "referencing_fields": [
+          "item_id"
+        ],
+        "referenced_entity": {
+          "name": "item"
+        },
+        "referenced_fields": [
+          "id"
+        ]
+      }
+    ]
+  },
+  "task": {
+    "id": "68fde57de0de5532f2842f3f",
+    "root": "68fc6c4be40a2b28c321df89",
+    "project": "68fc6c4be40a2b28c321df88",
+    "user": "e8c17380-b071-7083-fda4-718c96886eab"
+  },
+  "namespace": {
+    "id": "01987547fc6c72ecb453bd2736bd4ea0",
+    "tenant": 2,
+    "name": "global-1",
+    "default": true
+  },
+  "revision": 1
+}

@@ -1,0 +1,779 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Recipe Generation API",
+    "description": "A serverless API for generating creative recipes from inventory items using Google Gemini AI. The API accepts a list of available ingredients and returns customized recipes with nutritional information, instructions, and dietary tags.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "API Support",
+      "url": "https://github.com/your-repo/issues"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api-generate-recipes.vercel.app",
+      "description": "Production server"
+    },
+    {
+      "url": "http://localhost:3000",
+      "description": "Local development server"
+    }
+  ],
+  "paths": {
+    "/api/generate_recipes": {
+      "post": {
+        "summary": "Generate recipes from inventory",
+        "description": "Generates creative recipes based on available inventory items, considering dietary restrictions and nutritional information.",
+        "operationId": "generateRecipes",
+        "tags": ["Recipes"],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          },
+          {}
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecipeGenerationRequest"
+              },
+              "examples": {
+                "simple": {
+                  "summary": "Simple recipe generation",
+                  "value": {
+                    "inventory": [
+                      {
+                        "name": "Chicken Breast",
+                        "quantity": 500,
+                        "unit": "grams"
+                      },
+                      {
+                        "name": "Rice",
+                        "quantity": 300,
+                        "unit": "grams"
+                      },
+                      {
+                        "name": "Olive Oil",
+                        "quantity": 50,
+                        "unit": "ml"
+                      }
+                    ],
+                    "dietary_filters": [],
+                    "count": 1
+                  }
+                },
+                "vegetarian": {
+                  "summary": "Vegetarian recipe with dietary filters",
+                  "value": {
+                    "inventory": [
+                      {
+                        "id": "ITEM-001",
+                        "name": "Brown Rice",
+                        "category": "Grains",
+                        "quantity": 500,
+                        "unit": "grams",
+                        "tags": ["whole-grain"],
+                        "allergens": []
+                      },
+                      {
+                        "id": "ITEM-002",
+                        "name": "Black Beans",
+                        "category": "Legumes",
+                        "quantity": 400,
+                        "unit": "grams",
+                        "tags": ["protein"],
+                        "allergens": []
+                      },
+                      {
+                        "id": "ITEM-003",
+                        "name": "Bell Peppers",
+                        "category": "Vegetables",
+                        "quantity": 200,
+                        "unit": "grams",
+                        "tags": ["fresh"],
+                        "allergens": []
+                      }
+                    ],
+                    "dietary_filters": ["vegetarian", "gluten-free"],
+                    "count": 2
+                  }
+                },
+                "fullNutrition": {
+                  "summary": "Recipe with complete nutritional data",
+                  "value": {
+                    "inventory": [
+                      {
+                        "id": "ITEM-001",
+                        "name": "Salmon",
+                        "category": "Protein",
+                        "quantity": 300,
+                        "unit": "grams",
+                        "calories_kcal": 206,
+                        "protein_g": 22.1,
+                        "carbohydrates_g": 0,
+                        "fiber_g": 0,
+                        "sugars_g": 0,
+                        "fat_g": 12.4,
+                        "sodium_mg": 59,
+                        "tags": ["omega-3", "high-protein"],
+                        "allergens": ["fish"]
+                      },
+                      {
+                        "id": "ITEM-002",
+                        "name": "Quinoa",
+                        "category": "Grains",
+                        "quantity": 200,
+                        "unit": "grams",
+                        "calories_kcal": 120,
+                        "protein_g": 4.4,
+                        "carbohydrates_g": 21.3,
+                        "fiber_g": 2.8,
+                        "sugars_g": 0.9,
+                        "fat_g": 1.9,
+                        "sodium_mg": 7,
+                        "tags": ["gluten-free", "complete-protein"],
+                        "allergens": []
+                      },
+                      {
+                        "id": "ITEM-003",
+                        "name": "Spinach",
+                        "category": "Vegetables",
+                        "quantity": 150,
+                        "unit": "grams",
+                        "calories_kcal": 23,
+                        "protein_g": 2.9,
+                        "carbohydrates_g": 3.6,
+                        "fiber_g": 2.2,
+                        "sugars_g": 0.4,
+                        "fat_g": 0.4,
+                        "sodium_mg": 79,
+                        "tags": ["leafy-green", "iron-rich"],
+                        "allergens": []
+                      }
+                    ],
+                    "dietary_filters": [],
+                    "count": 1
+                  }
+                },
+                "withTargetServings": {
+                  "summary": "Recipe generation with target servings",
+                  "value": {
+                    "inventory": [
+                      {
+                        "id": "ITEM-001",
+                        "name": "Chicken Breast",
+                        "category": "Protein",
+                        "quantity": 2000,
+                        "unit": "grams",
+                        "calories_kcal": 165,
+                        "protein_g": 31.0
+                      },
+                      {
+                        "id": "ITEM-002",
+                        "name": "Rice",
+                        "category": "Grains",
+                        "quantity": 1000,
+                        "unit": "grams",
+                        "carbohydrates_g": 28.2
+                      }
+                    ],
+                    "dietary_filters": [],
+                    "count": 2,
+                    "recipes": 50
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Recipes generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecipeGenerationResponse"
+                },
+                "examples": {
+                  "success": {
+                    "summary": "Successful recipe generation",
+                    "value": {
+                      "success": true,
+                      "recipes": [
+                        {
+                          "title": "Simple Chicken and Rice Bowl",
+                          "description": "A quick and easy meal with tender chicken and fluffy rice.",
+                          "servings": 2,
+                          "prep_time_minutes": 25,
+                          "ingredients": [
+                            {
+                              "inventory_item_id": "ITEM-001",
+                              "name": "Chicken Breast",
+                              "quantity": 250,
+                              "unit": "grams"
+                            },
+                            {
+                              "inventory_item_id": "ITEM-002",
+                              "name": "Rice",
+                              "quantity": 150,
+                              "unit": "grams"
+                            }
+                          ],
+                          "instructions": [
+                            "Season the chicken breast with salt and pepper",
+                            "Heat olive oil in a pan over medium heat",
+                            "Cook chicken for 6-7 minutes per side until golden",
+                            "Meanwhile, cook rice according to package instructions",
+                            "Serve chicken over rice and enjoy"
+                          ],
+                          "nutrition_notes": [
+                            "20g protein per serving - meets 40% daily value",
+                            "Good source of complex carbohydrates"
+                          ],
+                          "dietary_tags": ["High-Protein"],
+                          "inventory_depletion_summary": [
+                            {
+                              "id": "ITEM-001",
+                              "quantity": 250,
+                              "unit": "grams"
+                            },
+                            {
+                              "id": "ITEM-002",
+                              "quantity": 150,
+                              "unit": "grams"
+                            }
+                          ],
+                          "substitutions": []
+                        }
+                      ],
+                      "count": 1
+                    }
+                  },
+                  "withNutrition": {
+                    "summary": "Recipe with detailed nutritional information",
+                    "value": {
+                      "success": true,
+                      "recipes": [
+                        {
+                          "title": "Salmon Quinoa Bowl with Spinach",
+                          "description": "A healthy and delicious bowl with flaky salmon, fluffy quinoa, and fresh spinach.",
+                          "servings": 2,
+                          "prep_time_minutes": 25,
+                          "ingredients": [
+                            {
+                              "inventory_item_id": "ITEM-001",
+                              "name": "Salmon",
+                              "quantity": 200,
+                              "unit": "grams"
+                            },
+                            {
+                              "inventory_item_id": "ITEM-002",
+                              "name": "Quinoa",
+                              "quantity": 100,
+                              "unit": "grams"
+                            },
+                            {
+                              "inventory_item_id": "ITEM-003",
+                              "name": "Spinach",
+                              "quantity": 100,
+                              "unit": "grams"
+                            }
+                          ],
+                          "instructions": [
+                            "Cook the quinoa according to package directions. This usually means boiling it in water for about 15 minutes.",
+                            "While the quinoa cooks, preheat your oven to 400°F (200°C).",
+                            "Place the salmon on a baking sheet lined with parchment paper. Bake for 12-15 minutes, or until cooked through and flakes easily with a fork.",
+                            "While the salmon is baking, wash and roughly chop the spinach.",
+                            "Once the quinoa is cooked, fluff it with a fork.",
+                            "Divide the quinoa between two bowls. Top with the baked salmon and spinach. Enjoy!"
+                          ],
+                          "nutrition_notes": [
+                            "Each serving provides approximately 22g of protein from the salmon, which is about 44% of the daily recommended intake.",
+                            "Quinoa provides a good source of fiber, about 3g per serving - 12% of your daily fiber needs."
+                          ],
+                          "dietary_tags": [],
+                          "inventory_depletion_summary": [
+                            {
+                              "id": "ITEM-001",
+                              "quantity": 200,
+                              "unit": "grams"
+                            },
+                            {
+                              "id": "ITEM-002",
+                              "quantity": 100,
+                              "unit": "grams"
+                            },
+                            {
+                              "id": "ITEM-003",
+                              "quantity": 100,
+                              "unit": "grams"
+                            }
+                          ],
+                          "substitutions": []
+                        }
+                      ],
+                      "count": 1
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid or missing inventory data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "noInventory": {
+                    "summary": "No inventory provided",
+                    "value": {
+                      "success": false,
+                      "error": "No inventory provided"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "unauthorized": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "error": "Unauthorized. Invalid or missing API key."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error - Recipe generation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "serverError": {
+                    "summary": "Server error",
+                    "value": {
+                      "success": false,
+                      "error": "Google API key not configured"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "options": {
+        "summary": "CORS preflight request",
+        "description": "Handles CORS preflight requests for the recipe generation endpoint",
+        "operationId": "optionsRecipes",
+        "tags": ["CORS"],
+        "responses": {
+          "200": {
+            "description": "CORS preflight response",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string",
+                  "example": "*"
+                },
+                "description": "Allowed origins for CORS"
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": {
+                  "type": "string",
+                  "example": "POST, OPTIONS"
+                },
+                "description": "Allowed HTTP methods"
+              },
+              "Access-Control-Allow-Headers": {
+                "schema": {
+                  "type": "string",
+                  "example": "Content-Type, X-API-Key"
+                },
+                "description": "Allowed request headers"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RecipeGenerationRequest": {
+        "type": "object",
+        "required": ["inventory"],
+        "properties": {
+          "inventory": {
+            "type": "array",
+            "description": "List of available ingredients in inventory",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/InventoryItem"
+            }
+          },
+          "dietary_filters": {
+            "type": "array",
+            "description": "List of dietary restrictions to consider",
+            "items": {
+              "type": "string",
+              "enum": [
+                "vegetarian",
+                "vegan",
+                "gluten-free",
+                "dairy-free",
+                "nut-free",
+                "low-carb",
+                "keto",
+                "paleo",
+                "halal",
+                "kosher"
+              ]
+            },
+            "default": []
+          },
+          "count": {
+            "type": "integer",
+            "description": "Number of unique recipes to generate",
+            "minimum": 1,
+            "maximum": 10,
+            "default": 2
+          },
+          "recipes": {
+            "type": "integer",
+            "description": "Total number of servings desired across all generated recipes (optional). If specified, the API will distribute servings across recipes and validate ingredient quantities. The LLM will be honest if ingredients are insufficient.",
+            "minimum": 1,
+            "example": 50
+          }
+        }
+      },
+      "InventoryItem": {
+        "type": "object",
+        "required": ["name", "quantity", "unit"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the inventory item (auto-generated if not provided)",
+            "example": "ITEM-001"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the ingredient",
+            "example": "Chicken Breast"
+          },
+          "category": {
+            "type": "string",
+            "description": "Category of the ingredient",
+            "default": "Other",
+            "example": "Protein"
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Available quantity of the ingredient",
+            "minimum": 0,
+            "example": 500
+          },
+          "unit": {
+            "type": "string",
+            "description": "Unit of measurement (grams, ml, cups, pieces, etc.)",
+            "example": "grams"
+          },
+          "tags": {
+            "type": "array",
+            "description": "Tags describing the ingredient",
+            "items": {
+              "type": "string"
+            },
+            "default": []
+          },
+          "allergens": {
+            "type": "array",
+            "description": "List of allergens present in the ingredient",
+            "items": {
+              "type": "string"
+            },
+            "default": []
+          },
+          "calories_kcal": {
+            "type": "number",
+            "description": "Calories per serving in kcal (optional)",
+            "minimum": 0,
+            "default": 0
+          },
+          "protein_g": {
+            "type": "number",
+            "description": "Protein content in grams (optional)",
+            "minimum": 0,
+            "default": 0
+          },
+          "carbohydrates_g": {
+            "type": "number",
+            "description": "Carbohydrates content in grams (optional)",
+            "minimum": 0,
+            "default": 0
+          },
+          "fiber_g": {
+            "type": "number",
+            "description": "Fiber content in grams (optional)",
+            "minimum": 0,
+            "default": 0
+          },
+          "sugars_g": {
+            "type": "number",
+            "description": "Sugars content in grams (optional)",
+            "minimum": 0,
+            "default": 0
+          },
+          "fat_g": {
+            "type": "number",
+            "description": "Fat content in grams (optional)",
+            "minimum": 0,
+            "default": 0
+          },
+          "sodium_mg": {
+            "type": "number",
+            "description": "Sodium content in milligrams (optional)",
+            "minimum": 0,
+            "default": 0
+          }
+        },
+        "example": {
+          "id": "ITEM-001",
+          "name": "Salmon",
+          "category": "Protein",
+          "quantity": 300,
+          "unit": "grams",
+          "calories_kcal": 206,
+          "protein_g": 22.1,
+          "carbohydrates_g": 0,
+          "fiber_g": 0,
+          "sugars_g": 0,
+          "fat_g": 12.4,
+          "sodium_mg": 59,
+          "tags": ["omega-3", "high-protein"],
+          "allergens": ["fish"]
+        }
+      },
+      "RecipeGenerationResponse": {
+        "type": "object",
+        "required": ["success", "recipes", "count"],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Indicates if the request was successful",
+            "example": true
+          },
+          "recipes": {
+            "type": "array",
+            "description": "List of generated recipes",
+            "items": {
+              "$ref": "#/components/schemas/Recipe"
+            }
+          },
+          "count": {
+            "type": "integer",
+            "description": "Number of recipes returned",
+            "example": 2
+          }
+        }
+      },
+      "Recipe": {
+        "type": "object",
+        "required": [
+          "title",
+          "description",
+          "servings",
+          "prep_time_minutes",
+          "ingredients",
+          "instructions"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Name of the recipe",
+            "example": "Simple Chicken and Rice Bowl"
+          },
+          "description": {
+            "type": "string",
+            "description": "Brief description of the recipe",
+            "example": "A quick and easy meal with tender chicken and fluffy rice."
+          },
+          "servings": {
+            "type": "integer",
+            "description": "Number of servings the recipe makes",
+            "minimum": 1,
+            "example": 2
+          },
+          "prep_time_minutes": {
+            "type": "integer",
+            "description": "Estimated preparation time in minutes",
+            "minimum": 0,
+            "example": 25
+          },
+          "ingredients": {
+            "type": "array",
+            "description": "List of ingredients used in the recipe",
+            "items": {
+              "$ref": "#/components/schemas/RecipeIngredient"
+            }
+          },
+          "instructions": {
+            "type": "array",
+            "description": "Step-by-step cooking instructions",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "Season the chicken breast with salt and pepper",
+              "Heat olive oil in a pan over medium heat",
+              "Cook chicken for 6-7 minutes per side until golden"
+            ]
+          },
+          "nutrition_notes": {
+            "type": "array",
+            "description": "Nutritional highlights and benefits",
+            "items": {
+              "type": "string"
+            },
+            "default": [],
+            "example": [
+              "20g protein per serving - meets 40% daily value",
+              "Good source of complex carbohydrates"
+            ]
+          },
+          "dietary_tags": {
+            "type": "array",
+            "description": "Dietary classifications of the recipe",
+            "items": {
+              "type": "string"
+            },
+            "default": [],
+            "example": ["High-Protein", "Gluten-Free"]
+          },
+          "inventory_depletion_summary": {
+            "type": "array",
+            "description": "Summary of inventory items used in this recipe",
+            "items": {
+              "$ref": "#/components/schemas/InventoryDepletion"
+            },
+            "default": []
+          },
+          "substitutions": {
+            "type": "array",
+            "description": "Suggested ingredient substitutions",
+            "items": {
+              "type": "string"
+            },
+            "default": []
+          }
+        }
+      },
+      "RecipeIngredient": {
+        "type": "object",
+        "required": ["inventory_item_id", "name", "quantity", "unit"],
+        "properties": {
+          "inventory_item_id": {
+            "type": "string",
+            "description": "ID of the inventory item used",
+            "example": "ITEM-001"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the ingredient",
+            "example": "Chicken Breast"
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "Amount of ingredient used (integer only)",
+            "minimum": 1,
+            "example": 250
+          },
+          "unit": {
+            "type": "string",
+            "description": "Unit of measurement",
+            "example": "grams"
+          }
+        }
+      },
+      "InventoryDepletion": {
+        "type": "object",
+        "required": ["id", "quantity", "unit"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the inventory item depleted",
+            "example": "ITEM-001"
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "Amount of inventory used (integer only)",
+            "minimum": 1,
+            "example": 250
+          },
+          "unit": {
+            "type": "string",
+            "description": "Unit of measurement",
+            "example": "grams"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["success", "error"],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Always false for error responses",
+            "example": false
+          },
+          "error": {
+            "type": "string",
+            "description": "Error message describing what went wrong",
+            "example": "No inventory provided"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "Optional API key for authentication (only required if API_KEY environment variable is configured)"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Recipes",
+      "description": "Recipe generation endpoints"
+    },
+    {
+      "name": "CORS",
+      "description": "CORS support endpoints"
+    }
+  ]
+}
+
