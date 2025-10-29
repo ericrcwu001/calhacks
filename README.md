@@ -2,6 +2,13 @@
 
 A comprehensive food bank management system that leverages AI to streamline inventory management, food recognition, and recipe generation. Built with React, TypeScript, and integrated with multiple AI services.
 
+#### CalHacks 12.0 Creao.AI Best Design Winners
+
+#### Created by Eric Wu, Ethan Lai, Maleeka Raddygala, and William Wang
+- UI and Integration by Eric
+- Recipe Generation & Inventory Logging Algo by Ethan
+- ML Image Processing by Maleeka
+- Barcode Scanning Database by William
 ## 🚀 Live Demo
 
 **[Try Creao Now](https://production.creao.ai/share?app=TW8zO4eq&utm_source=share&utm_medium=link)**
