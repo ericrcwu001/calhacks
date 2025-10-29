@@ -1,4 +1,4 @@
-# Creao - AI-Powered Food Bank Management System
+# Foodsafe - AI-Powered Food Bank Management System
 
 A comprehensive food bank management system that leverages AI to streamline inventory management, food recognition, and recipe generation. Built with React, TypeScript, and integrated with multiple AI services.
 
