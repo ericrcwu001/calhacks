@@ -9,9 +9,12 @@ A comprehensive food bank management system that leverages AI to streamline inve
 - Recipe Generation & Inventory Logging Algo by Ethan
 - ML Image Processing by Maleeka
 - Barcode Scanning Database by William
+
+Devpost: [Calhacks 12.0 Hackathon Submission](https://devpost.com/software/foodbank-automation)
 ## 🚀 Live Demo
 
 **[Try Creao Now](https://production.creao.ai/share?app=TW8zO4eq&utm_source=share&utm_medium=link)**
+
 
 ## ✨ Key Features
 
